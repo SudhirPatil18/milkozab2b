@@ -6,15 +6,22 @@ import {
     ShoppingCartIcon,
     Cog6ToothIcon,
     ChartPieIcon,
-    XMarkIcon // For close button on mobile
+    XMarkIcon,
+    PlusIcon,
+    PencilSquareIcon,
+    BuildingStorefrontIcon,
+    ClipboardDocumentListIcon,
+    TagIcon
 } from '@heroicons/react/24/outline';
 
 const navItems = [
     { name: 'Dashboard', href: '/admin/dashboard', icon: HomeIcon },
-    { name: 'Users', href: '/admin/users', icon: UserGroupIcon }, // Example route
-    { name: 'Products', href: '/admin/products', icon: ShoppingCartIcon }, // Example route
-    { name: 'Settings', href: '/admin/settings', icon: Cog6ToothIcon }, // Example route
-    { name: 'Reports', href: '/admin/reports', icon: ChartPieIcon }, // Example route
+    { name: 'Add Product', href: '/admin/add-product', icon: PlusIcon },
+    { name: 'Manage Products', href: '/admin/manage-products', icon: PencilSquareIcon },
+    { name: 'Manage Shops', href: '/admin/manage-shops', icon: BuildingStorefrontIcon },
+    { name: 'Order Management', href: '/admin/order-management', icon: ClipboardDocumentListIcon },
+    { name: 'Categories', href: '/admin/categories', icon: TagIcon },
+    { name: 'Settings', href: '/admin/settings', icon: Cog6ToothIcon },
 ];
 
 function AdminSidebar({ isOpen, toggleSidebar }) {
