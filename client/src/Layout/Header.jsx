@@ -352,7 +352,7 @@ const Header = () => {
                                         to="/shop-login" 
                                 className="inline-flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-gray-900 transition-colors duration-200"
                             >
-                                        Shop Login
+                                        Login
                                     </Link>
 
                                     {/* Register Button */}
@@ -360,7 +360,7 @@ const Header = () => {
                                         to="/shop-register" 
                                         className="inline-flex items-center px-4 py-2 text-sm font-medium text-green-600 hover:text-green-700 transition-colors duration-200"
                                     >
-                                        Shop Register
+                                         Register
                             </Link>
 
                             {/* Cart Button */}

@@ -17,7 +17,7 @@ const OrderSuccess = () => {
     try {
       const token = localStorage.getItem('adminToken');
       
-      const response = await fetch(`http://localhost:7000/api/orders/${orderId}`, {
+      const response = await fetch(`https://api.milkoza.in/api/orders/${orderId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }

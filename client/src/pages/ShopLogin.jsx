@@ -74,7 +74,7 @@ function ShopLogin() {
             </div>
           </div>
           <h2 className="mt-6 text-3xl font-bold text-gray-900">
-            Shop Login
+             Login
           </h2>
           <p className="mt-2 text-sm text-gray-600">
             Welcome back to MilkozaB2B

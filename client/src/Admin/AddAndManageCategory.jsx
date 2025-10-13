@@ -31,7 +31,7 @@ function AddAndManageCategory() {
         return
       }
 
-      const response = await fetch('http://localhost:7000/api/admin/categories', {
+      const response = await fetch('https://api.milkoza.in/api/admin/categories', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -98,7 +98,7 @@ function AddAndManageCategory() {
       formDataToSend.append('name', formData.name)
       formDataToSend.append('photo', selectedFile)
 
-      const response = await fetch('http://localhost:7000/api/categories', {
+      const response = await fetch('https://api.milkoza.in/api/categories', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -140,7 +140,7 @@ function AddAndManageCategory() {
         formDataToSend.append('photo', selectedFile)
       }
 
-      const response = await fetch(`http://localhost:7000/api/categories/${editingCategory._id}`, {
+      const response = await fetch(`https://api.milkoza.in/api/categories/${editingCategory._id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
@@ -173,7 +173,7 @@ function AddAndManageCategory() {
     if (window.confirm('Are you sure you want to delete this category?')) {
       setLoading(true)
       try {
-        const response = await fetch(`http://localhost:7000/api/categories/${id}`, {
+        const response = await fetch(`https://api.milkoza.in/api/categories/${id}`, {
           method: 'DELETE',
           headers: {
             'Authorization': `Bearer ${localStorage.getItem('adminToken')}`
@@ -262,7 +262,7 @@ function AddAndManageCategory() {
                   <tr key={category._id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap">
                       <img
-                        src={category.photo.startsWith('http') ? category.photo : `http://localhost:7000${category.photo}`}
+                        src={category.photo.startsWith('http') ? category.photo : `https://api.milkoza.in${category.photo}`}
                         alt={category.name}
                         className="h-12 w-12 rounded-lg object-cover"
                         onError={(e) => {
@@ -447,7 +447,7 @@ function AddAndManageCategory() {
                   <div className="mt-2">
                     <p className="text-sm text-gray-500">Current image:</p>
                     <img
-                      src={editingCategory.photo.startsWith('http') ? editingCategory.photo : `http://localhost:7000${editingCategory.photo}`}
+                      src={editingCategory.photo.startsWith('http') ? editingCategory.photo : `https://api.milkoza.in${editingCategory.photo}`}
                       alt={editingCategory.name}
                       className="h-20 w-20 object-cover rounded-lg border"
                     />

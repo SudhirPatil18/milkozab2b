@@ -48,7 +48,7 @@ const LoginPromptModal = ({ isOpen, onClose, cartItems = [] }) => {
                     <div key={index} className="flex items-center space-x-3 py-2">
                       <div className="w-8 h-8 rounded-lg overflow-hidden flex-shrink-0">
                         <img
-                          src={item.product.photo?.startsWith('http') ? item.product.photo : `http://localhost:7000${item.product.photo}`}
+                          src={item.product.photo?.startsWith('http') ? item.product.photo : `https://api.milkoza.in${item.product.photo}`}
                           alt={item.product.name}
                           className="w-full h-full object-cover"
                           onError={(e) => {

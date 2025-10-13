@@ -39,7 +39,7 @@ const OrderHistory = () => {
       
       console.log('Fetching orders with token:', token ? 'Token exists' : 'No token');
       
-      const response = await fetch('http://localhost:7000/api/orders', {
+      const response = await fetch('https://api.milkoza.in/api/orders', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -235,7 +235,7 @@ const OrderHistory = () => {
                     <div key={index} className="flex items-center space-x-3">
                       <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
                         <img
-                          src={item.product.photo?.startsWith('http') ? item.product.photo : `http://localhost:7000${item.product.photo}`}
+                          src={item.product.photo?.startsWith('http') ? item.product.photo : `https://api.milkoza.in${item.product.photo}`}
                           alt={item.product.name}
                           className="w-full h-full object-cover"
                           onError={(e) => {

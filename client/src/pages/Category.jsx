@@ -39,7 +39,7 @@ function Category() {
   const fetchCategory = async () => {
     try {
       setCategoryLoading(true);
-      const response = await fetch(`http://localhost:7000/api/categories/${categoryId}`);
+      const response = await fetch(`https://api.milkoza.in/api/categories/${categoryId}`);
       const data = await response.json();
       
       if (data.success) {
@@ -58,7 +58,7 @@ function Category() {
       setLoading(true);
       
       // Fetch products from API
-      const response = await fetch(`http://localhost:7000/api/products/category/${categoryId}`);
+      const response = await fetch(`https://api.milkoza.in/api/products/category/${categoryId}`);
       const data = await response.json();
       
       if (data.success) {
@@ -147,7 +147,7 @@ function Category() {
           <div className="flex items-center space-x-4">
             <div className="w-16 h-16 rounded-lg overflow-hidden">
               <img
-                src={selectedCategory.photo.startsWith('http') ? selectedCategory.photo : `http://localhost:7000${selectedCategory.photo}`}
+                src={selectedCategory.photo.startsWith('http') ? selectedCategory.photo : `https://api.milkoza.in${selectedCategory.photo}`}
                 alt={selectedCategory.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -190,7 +190,7 @@ function Category() {
                     <div key={product._id} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1">
                       <div className="relative">
                         <img
-                          src={product.photo.startsWith('http') ? product.photo : `http://localhost:7000${product.photo}`}
+                          src={product.photo.startsWith('http') ? product.photo : `https://api.milkoza.in${product.photo}`}
                           alt={product.name}
                           className="w-full h-28 sm:h-32 md:h-36 lg:h-40 object-cover"
                           onError={(e) => {

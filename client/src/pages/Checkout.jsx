@@ -64,7 +64,7 @@ const Checkout = () => {
       setLoadingAddresses(true);
       const token = localStorage.getItem('shopToken');
       
-      const response = await fetch('http://localhost:7000/api/addresses', {
+      const response = await fetch('https://api.milkoza.in/api/addresses', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -109,7 +109,7 @@ const Checkout = () => {
     try {
       const token = localStorage.getItem('shopToken');
       
-      const response = await fetch('http://localhost:7000/api/addresses', {
+      const response = await fetch('https://api.milkoza.in/api/addresses', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -192,7 +192,7 @@ const Checkout = () => {
     try {
       const token = localStorage.getItem('shopToken');
       
-      const response = await fetch(`http://localhost:7000/api/addresses/${editingAddress._id}`, {
+      const response = await fetch(`https://api.milkoza.in/api/addresses/${editingAddress._id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -272,7 +272,7 @@ const Checkout = () => {
         notes: ''
       };
 
-      const response = await fetch('http://localhost:7000/api/orders', {
+      const response = await fetch('https://api.milkoza.in/api/orders', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -674,7 +674,7 @@ const Checkout = () => {
                   <div key={item.id || `${item.product._id}_${index}`} className="flex items-center space-x-3">
                     <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
                       <img
-                        src={item.product.photo?.startsWith('http') ? item.product.photo : `http://localhost:7000${item.product.photo}`}
+                        src={item.product.photo?.startsWith('http') ? item.product.photo : `https://api.milkoza.in${item.product.photo}`}
                         alt={item.product.name}
                         className="w-full h-full object-cover"
                         onError={(e) => {

@@ -11,7 +11,7 @@ function ManageShops() {
   const [totalShops, setTotalShops] = useState(0);
   const [actionLoading, setActionLoading] = useState({});
 
-  const API_BASE_URL = 'http://localhost:7000/api';
+  const API_BASE_URL = 'https://api.milkoza.in/api';
 
   // Get admin token from localStorage
   const getAuthToken = () => {

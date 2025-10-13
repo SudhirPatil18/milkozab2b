@@ -17,7 +17,7 @@ export const AuthProvider = ({ children }) => {
     const [token, setToken] = useState(null);
 
     // API base URL
-    const API_BASE_URL = 'http://localhost:7000/api';
+    const API_BASE_URL = 'https://api.milkoza.in/api';
 
     // Check if user is logged in on app start
     useEffect(() => {

@@ -102,7 +102,7 @@ export const CartProvider = ({ children }) => {
         return;
       }
 
-      const response = await fetch('http://localhost:7000/api/cart', {
+      const response = await fetch('https://api.milkoza.in/api/cart', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -151,7 +151,7 @@ export const CartProvider = ({ children }) => {
       dispatch({ type: 'SET_LOADING', payload: true });
       const token = localStorage.getItem('shopToken');
       
-      const response = await fetch('http://localhost:7000/api/cart/items', {
+      const response = await fetch('https://api.milkoza.in/api/cart/items', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -195,7 +195,7 @@ export const CartProvider = ({ children }) => {
       dispatch({ type: 'SET_LOADING', payload: true });
       const token = localStorage.getItem('shopToken');
       
-      const response = await fetch(`http://localhost:7000/api/cart/items/${productId}`, {
+      const response = await fetch(`https://api.milkoza.in/api/cart/items/${productId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -239,7 +239,7 @@ export const CartProvider = ({ children }) => {
       dispatch({ type: 'SET_LOADING', payload: true });
       const token = localStorage.getItem('shopToken');
       
-      const response = await fetch(`http://localhost:7000/api/cart/items/${productId}`, {
+      const response = await fetch(`https://api.milkoza.in/api/cart/items/${productId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -274,7 +274,7 @@ export const CartProvider = ({ children }) => {
       dispatch({ type: 'SET_LOADING', payload: true });
       const token = localStorage.getItem('shopToken');
       
-      const response = await fetch('http://localhost:7000/api/cart', {
+      const response = await fetch('https://api.milkoza.in/api/cart', {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -320,7 +320,7 @@ export const CartProvider = ({ children }) => {
         // Use direct API call to avoid triggering guest cart logic
         const token = localStorage.getItem('shopToken');
         if (token) {
-          await fetch('http://localhost:7000/api/cart/items', {
+          await fetch('https://api.milkoza.in/api/cart/items', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

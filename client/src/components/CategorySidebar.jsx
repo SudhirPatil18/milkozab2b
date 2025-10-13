@@ -11,7 +11,7 @@ const CategorySidebar = ({ onCategorySelect, selectedCategory }) => {
   const fetchCategories = async () => {
     try {
       setLoading(true);
-      const response = await fetch('http://localhost:7000/api/categories');
+      const response = await fetch('https://api.milkoza.in/api/categories');
       
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -105,7 +105,7 @@ const CategorySidebar = ({ onCategorySelect, selectedCategory }) => {
               {/* Round Category Image */}
               <div className="w-12 h-12 sm:w-14 sm:h-14 flex-shrink-0 relative">
                 <img
-                  src={category.photo.startsWith('http') ? category.photo : `http://localhost:7000${category.photo}`}
+                  src={category.photo.startsWith('http') ? category.photo : `https://api.milkoza.in${category.photo}`}
                   alt={category.name}
                   className="w-full h-full object-cover rounded-full border-2 border-gray-200 shadow-sm"
                   onError={(e) => {

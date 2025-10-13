@@ -39,9 +39,9 @@ function Home() {
   const fetchProducts = async (categoryId = null) => {
     try {
       setLoading(true);
-      let url = 'http://localhost:7000/api/products';
+      let url = 'https://api.milkoza.in/api/products';
       if (categoryId) {
-        url = `http://localhost:7000/api/products/category/${categoryId}`;
+        url = `https://api.milkoza.in/api/products/category/${categoryId}`;
       }
       
       const response = await fetch(url);
@@ -145,7 +145,7 @@ function Home() {
                 <Link key={product._id} to={`/product/${product._id}`} className="bg-white border border-gray-200 rounded-lg overflow-hidden hover:shadow-lg transition-all duration-200 hover:-translate-y-1 block">
                   <div className="relative">
                     <img
-                      src={product.photo.startsWith('http') ? product.photo : `http://localhost:7000${product.photo}`}
+                      src={product.photo.startsWith('http') ? product.photo : `https://api.milkoza.in${product.photo}`}
                       alt={product.name}
                       className="w-full h-28 sm:h-32 md:h-36 lg:h-40 object-cover"
                       onError={(e) => {

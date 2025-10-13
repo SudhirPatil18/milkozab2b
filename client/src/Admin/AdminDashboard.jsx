@@ -62,7 +62,7 @@ function AdminDashboard() {
         }
 
         // Fetch dashboard statistics from the backend
-        const dashboardResponse = await fetch('http://localhost:7000/api/admin/dashboard/stats', {
+        const dashboardResponse = await fetch('https://api.milkoza.in/api/admin/dashboard/stats', {
           headers: {
             'Authorization': `Bearer ${token}`,
             'Content-Type': 'application/json'

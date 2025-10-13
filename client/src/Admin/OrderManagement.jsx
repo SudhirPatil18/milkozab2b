@@ -68,7 +68,7 @@ const OrderManagement = () => {
         queryParams.append('status', filterParams.status);
       }
       
-      const url = `http://localhost:7000/api/orders/admin${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
+      const url = `https://api.milkoza.in/api/orders/admin${queryParams.toString() ? `?${queryParams.toString()}` : ''}`;
       
       const response = await fetch(url, {
         headers: {
@@ -153,7 +153,7 @@ const OrderManagement = () => {
     try {
       const token = localStorage.getItem('adminToken');
       
-      const response = await fetch(`http://localhost:7000/api/orders/admin/${orderId}/status`, {
+      const response = await fetch(`https://api.milkoza.in/api/orders/admin/${orderId}/status`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -198,7 +198,7 @@ const OrderManagement = () => {
     try {
       const token = localStorage.getItem('adminToken');
       
-      const response = await fetch(`http://localhost:7000/api/orders/admin/${orderId}/receipt`, {
+      const response = await fetch(`https://api.milkoza.in/api/orders/admin/${orderId}/receipt`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -400,7 +400,7 @@ const OrderManagement = () => {
                         <div key={index} className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
                           <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                             <img
-                              src={item.product?.photo?.startsWith('http') ? item.product.photo : `http://localhost:7000${item.product?.photo}`}
+                              src={item.product?.photo?.startsWith('http') ? item.product.photo : `https://api.milkoza.in${item.product?.photo}`}
                               alt={item.product?.name || 'Product'}
                               className="w-full h-full object-cover"
                               onError={(e) => {

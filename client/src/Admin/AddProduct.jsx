@@ -30,7 +30,7 @@ function AddProduct() {
   // Fetch categories for dropdown
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://localhost:7000/api/categories');
+      const response = await fetch('https://api.milkoza.in/api/categories');
       const data = await response.json();
       if (data.success) {
         setCategories(data.data);
@@ -44,7 +44,7 @@ function AddProduct() {
   // Fetch units for dropdown
   const fetchUnits = async () => {
     try {
-      const response = await fetch('http://localhost:7000/api/units');
+      const response = await fetch('https://api.milkoza.in/api/units');
       const data = await response.json();
       if (data.success) {
         setUnits(data.data);
@@ -70,7 +70,7 @@ function AddProduct() {
     }
 
     try {
-      const response = await fetch('http://localhost:7000/api/units', {
+      const response = await fetch('https://api.milkoza.in/api/units', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -106,7 +106,7 @@ function AddProduct() {
     }
 
     try {
-      const response = await fetch(`http://localhost:7000/api/units/${unitId}`, {
+      const response = await fetch(`https://api.milkoza.in/api/units/${unitId}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -218,7 +218,7 @@ function AddProduct() {
       }
 
 
-      const response = await fetch('http://localhost:7000/api/products', {
+      const response = await fetch('https://api.milkoza.in/api/products', {
         method: 'POST',
         headers: {
           'Authorization': `Bearer ${token}`

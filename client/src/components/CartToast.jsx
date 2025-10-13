@@ -19,7 +19,7 @@ const CartToast = ({ isVisible, onClose, product, onViewCart }) => {
           {/* Product Image */}
           <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
             <img
-              src={product.photo?.startsWith('http') ? product.photo : `http://localhost:7000${product.photo}`}
+              src={product.photo?.startsWith('http') ? product.photo : `https://api.milkoza.in${product.photo}`}
               alt={product.name}
               className="w-full h-full object-cover"
               onError={(e) => {

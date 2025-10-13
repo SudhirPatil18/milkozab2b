@@ -53,7 +53,7 @@ function ManageProduct() {
         category: categoryFilter
       });
 
-      const response = await fetch(`http://localhost:7000/api/products/admin/all?${params}`, {
+      const response = await fetch(`https://api.milkoza.in/api/products/admin/all?${params}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -82,7 +82,7 @@ function ManageProduct() {
   // Fetch categories for filter
   const fetchCategories = async () => {
     try {
-      const response = await fetch('http://localhost:7000/api/categories');
+      const response = await fetch('https://api.milkoza.in/api/categories');
       const data = await response.json();
       if (data.success) {
         setCategories(data.data);
@@ -95,7 +95,7 @@ function ManageProduct() {
   // Fetch units for dropdown
   const fetchUnits = async () => {
     try {
-      const response = await fetch('http://localhost:7000/api/units');
+      const response = await fetch('https://api.milkoza.in/api/units');
       const data = await response.json();
       if (data.success) {
         setUnits(data.data);
@@ -141,7 +141,7 @@ function ManageProduct() {
         formDataToSend.append('subimage', editSelectedSubimageFile);
       }
 
-      const response = await fetch(`http://localhost:7000/api/products/${editingProduct._id}`, {
+      const response = await fetch(`https://api.milkoza.in/api/products/${editingProduct._id}`, {
         method: 'PUT',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -270,7 +270,7 @@ function ManageProduct() {
     setLoading(true);
     try {
       const token = localStorage.getItem('adminToken');
-      const response = await fetch(`http://localhost:7000/api/products/${id}`, {
+      const response = await fetch(`https://api.milkoza.in/api/products/${id}`, {
         method: 'DELETE',
         headers: {
           'Authorization': `Bearer ${token}`
@@ -448,7 +448,7 @@ function ManageProduct() {
                         <div className="flex items-center">
                           <div className="w-12 h-12 rounded-lg overflow-hidden">
                             <img
-                              src={product.photo.startsWith('http') ? product.photo : `http://localhost:7000${product.photo}`}
+                              src={product.photo.startsWith('http') ? product.photo : `https://api.milkoza.in${product.photo}`}
                               alt={product.name}
                               className="w-full h-full object-cover"
                               onError={(e) => {
@@ -519,7 +519,7 @@ function ManageProduct() {
                   <div className="flex items-start space-x-3">
                     <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                       <img
-                        src={product.photo.startsWith('http') ? product.photo : `http://localhost:7000${product.photo}`}
+                        src={product.photo.startsWith('http') ? product.photo : `https://api.milkoza.in${product.photo}`}
                         alt={product.name}
                         className="w-full h-full object-cover"
                         onError={(e) => {
@@ -795,7 +795,7 @@ function ManageProduct() {
                     <div className="mt-4">
                       <p className="text-sm text-gray-500">Current image:</p>
                       <img
-                        src={editingProduct.photo.startsWith('http') ? editingProduct.photo : `http://localhost:7000${editingProduct.photo}`}
+                        src={editingProduct.photo.startsWith('http') ? editingProduct.photo : `https://api.milkoza.in${editingProduct.photo}`}
                         alt={editingProduct.name}
                         className="w-32 h-32 object-cover rounded-lg border"
                       />
@@ -836,7 +836,7 @@ function ManageProduct() {
                     <div className="mt-4">
                       <p className="text-sm text-gray-500">Current sub image:</p>
                       <img
-                        src={editingProduct.subimage.startsWith('http') ? editingProduct.subimage : `http://localhost:7000${editingProduct.subimage}`}
+                        src={editingProduct.subimage.startsWith('http') ? editingProduct.subimage : `https://api.milkoza.in${editingProduct.subimage}`}
                         alt={`${editingProduct.name} sub image`}
                         className="w-32 h-32 object-cover rounded-lg border"
                       />

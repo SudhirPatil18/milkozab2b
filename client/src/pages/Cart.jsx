@@ -142,7 +142,7 @@ const Cart = () => {
                             {/* Product Image */}
                             <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                               <img
-                                src={item.product.photo?.startsWith('http') ? item.product.photo : `http://localhost:7000${item.product.photo}`}
+                                src={item.product.photo?.startsWith('http') ? item.product.photo : `https://api.milkoza.in${item.product.photo}`}
                                 alt={item.product.name}
                                 className="w-full h-full object-cover"
                                 onError={(e) => {
@@ -218,7 +218,7 @@ const Cart = () => {
                           {/* Product Image */}
                           <div className="w-16 h-16 rounded-lg overflow-hidden flex-shrink-0">
                             <img
-                              src={item.product.photo?.startsWith('http') ? item.product.photo : `http://localhost:7000${item.product.photo}`}
+                              src={item.product.photo?.startsWith('http') ? item.product.photo : `https://api.milkoza.in${item.product.photo}`}
                               alt={item.product.name}
                               className="w-full h-full object-cover"
                               onError={(e) => {

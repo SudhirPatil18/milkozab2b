@@ -31,7 +31,7 @@ const ProductDetails = () => {
   const fetchProductDetails = async () => {
     try {
       setLoading(true);
-      const response = await fetch(`http://localhost:7000/api/products/${id}`);
+      const response = await fetch(`https://api.milkoza.in/api/products/${id}`);
       const data = await response.json();
       
       if (data.success) {
@@ -150,7 +150,7 @@ const ProductDetails = () => {
             {/* Main Image */}
             <div className="aspect-square bg-white rounded-lg border border-gray-200 overflow-hidden">
               <img
-                src={images[selectedImage]?.startsWith('http') ? images[selectedImage] : `http://localhost:7000${images[selectedImage]}`}
+                src={images[selectedImage]?.startsWith('http') ? images[selectedImage] : `https://api.milkoza.in${images[selectedImage]}`}
                 alt={product.name}
                 className="w-full h-full object-cover"
                 onError={(e) => {
@@ -173,7 +173,7 @@ const ProductDetails = () => {
                     }`}
                   >
                     <img
-                      src={image?.startsWith('http') ? image : `http://localhost:7000${image}`}
+                      src={image?.startsWith('http') ? image : `https://api.milkoza.in${image}`}
                       alt={`${product.name} ${index + 1}`}
                       className="w-full h-full object-cover"
                       onError={(e) => {
