@@ -13,7 +13,7 @@ const __dirname = path.dirname(__filename);
 // @access  Public
 export const getAllProducts = async (req, res) => {
     try {
-        const { category, search, page = 1, limit = 10 } = req.query;
+        const { category, search, page = 1, limit = 1000 } = req.query;
         
         // Build query
         let query = { isActive: true };
@@ -23,26 +23,129 @@ export const getAllProducts = async (req, res) => {
             query.category = category;
         }
         
-        // Search functionality
+        // Search functionality with category name
+        let products;
+        let totalProducts;
+        
         if (search) {
-            query.$or = [
-                { name: { $regex: search, $options: 'i' } },
-                { shortDescription: { $regex: search, $options: 'i' } }
+            // Use aggregation to search in product fields and category name
+            const pipeline = [
+                {
+                    $match: { isActive: true }
+                },
+                {
+                    $lookup: {
+                        from: 'categories',
+                        localField: 'category',
+                        foreignField: '_id',
+                        as: 'categoryInfo'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'units',
+                        localField: 'unit',
+                        foreignField: '_id',
+                        as: 'unitInfo'
+                    }
+                },
+                {
+                    $lookup: {
+                        from: 'admins',
+                        localField: 'createdBy',
+                        foreignField: '_id',
+                        as: 'createdByInfo'
+                    }
+                },
+                {
+                    $match: {
+                        $or: [
+                            { name: { $regex: search, $options: 'i' } },
+                            { shortDescription: { $regex: search, $options: 'i' } },
+                            { 'categoryInfo.name': { $regex: search, $options: 'i' } }
+                        ]
+                    }
+                },
+                {
+                    $addFields: {
+                        category: { $arrayElemAt: ['$categoryInfo', 0] },
+                        unit: { $arrayElemAt: ['$unitInfo', 0] },
+                        createdBy: { $arrayElemAt: ['$createdByInfo', 0] }
+                    }
+                },
+                {
+                    $project: {
+                        categoryInfo: 0,
+                        unitInfo: 0,
+                        createdByInfo: 0
+                    }
+                },
+                {
+                    $sort: { createdAt: -1 }
+                },
+                {
+                    $skip: (parseInt(page) - 1) * parseInt(limit)
+                },
+                {
+                    $limit: parseInt(limit)
+                }
             ];
+            
+            // Add category filter if provided
+            if (category && category !== 'all') {
+                pipeline[0].$match.category = new mongoose.Types.ObjectId(category);
+            }
+            
+            products = await Product.aggregate(pipeline);
+            
+            // Get total count for search results
+            const countPipeline = [
+                {
+                    $match: { isActive: true }
+                },
+                {
+                    $lookup: {
+                        from: 'categories',
+                        localField: 'category',
+                        foreignField: '_id',
+                        as: 'categoryInfo'
+                    }
+                },
+                {
+                    $match: {
+                        $or: [
+                            { name: { $regex: search, $options: 'i' } },
+                            { shortDescription: { $regex: search, $options: 'i' } },
+                            { 'categoryInfo.name': { $regex: search, $options: 'i' } }
+                        ]
+                    }
+                },
+                {
+                    $count: "total"
+                }
+            ];
+            
+            if (category && category !== 'all') {
+                countPipeline[0].$match.category = new mongoose.Types.ObjectId(category);
+            }
+            
+            const countResult = await Product.aggregate(countPipeline);
+            totalProducts = countResult.length > 0 ? countResult[0].total : 0;
+        } else {
+            // Regular query without search
+            // Pagination
+            const skip = (parseInt(page) - 1) * parseInt(limit);
+            
+            products = await Product.find(query)
+                .populate('category', 'name photo')
+                .populate('unit', 'name symbol')
+                .populate('createdBy', 'name email')
+                .sort({ createdAt: -1 })
+                .skip(skip)
+                .limit(parseInt(limit));
+            
+            totalProducts = await Product.countDocuments(query);
         }
-        
-        // Pagination
-        const skip = (parseInt(page) - 1) * parseInt(limit);
-        
-        const products = await Product.find(query)
-            .populate('category', 'name photo')
-            .populate('unit', 'name symbol')
-            .populate('createdBy', 'name email')
-            .sort({ createdAt: -1 })
-            .skip(skip)
-            .limit(parseInt(limit));
-        
-        const totalProducts = await Product.countDocuments(query);
         
         res.status(200).json({
             success: true,

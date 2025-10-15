@@ -1,12 +1,16 @@
-import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect, useCallback } from 'react';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { useCart } from '../contexts/CartContext';
 
 const Header = () => {
     const [isUserDropdownOpen, setIsUserDropdownOpen] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
+    const [isSearching, setIsSearching] = useState(false);
     const { user: shopUser, logout } = useAuth();
     const { totalItems: cartCount } = useCart();
+    const navigate = useNavigate();
+    const location = useLocation();
 
 
     const toggleUserDropdown = () => {
@@ -17,6 +21,62 @@ const Header = () => {
         logout();
         setIsUserDropdownOpen(false);
     };
+
+    // Throttled search function
+    const throttledSearch = useCallback(
+        (() => {
+            let timeoutId;
+            return (term) => {
+                clearTimeout(timeoutId);
+                timeoutId = setTimeout(() => {
+                    if (term.trim()) {
+                        setIsSearching(true);
+                        // Navigate to home with search query
+                        navigate(`/?search=${encodeURIComponent(term.trim())}`);
+                    } else {
+                        // Clear search
+                        navigate('/');
+                    }
+                    setIsSearching(false);
+                }, 500); // 500ms throttle
+            };
+        })(),
+        [navigate]
+    );
+
+    // Handle search input change
+    const handleSearchChange = (e) => {
+        const value = e.target.value;
+        setSearchTerm(value);
+        throttledSearch(value);
+    };
+
+    // Handle search form submission
+    const handleSearchSubmit = (e) => {
+        e.preventDefault();
+        if (searchTerm.trim()) {
+            navigate(`/?search=${encodeURIComponent(searchTerm.trim())}`);
+        } else {
+            navigate('/');
+        }
+    };
+
+    // Clear search
+    const handleClearSearch = () => {
+        setSearchTerm('');
+        navigate('/');
+    };
+
+    // Sync search term with URL parameters
+    useEffect(() => {
+        const urlParams = new URLSearchParams(location.search);
+        const searchParam = urlParams.get('search');
+        if (searchParam) {
+            setSearchTerm(searchParam);
+        } else {
+            setSearchTerm('');
+        }
+    }, [location.search]);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -197,18 +257,37 @@ const Header = () => {
 
                     {/* Mobile Search Bar */}
                     <div className="pb-2">
-                        <div className="relative">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
+                        <form onSubmit={handleSearchSubmit}>
+                            <div className="relative">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    {isSearching ? (
+                                        <div className="w-4 h-4 border-2 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
+                                    ) : (
+                                        <svg className="h-4 w-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                        </svg>
+                                    )}
+                                </div>
+                                <input
+                                    type="text"
+                                    placeholder="Search 'milk'"
+                                    value={searchTerm}
+                                    onChange={handleSearchChange}
+                                    className="block w-full pl-9 pr-10 py-2 border border-gray-300 rounded-lg leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm"
+                                />
+                                {searchTerm && (
+                                    <button
+                                        type="button"
+                                        onClick={handleClearSearch}
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                                    >
+                                        <svg className="h-4 w-4 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                        </svg>
+                                    </button>
+                                )}
                             </div>
-                            <input
-                                type="text"
-                                placeholder="Search 'milk'"
-                                className="block w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-green-500 focus:border-green-500 text-sm"
-                            />
-                        </div>
+                        </form>
                     </div>
 
                 </div>
@@ -248,18 +327,37 @@ const Header = () => {
 
                         {/* Search Bar */}
                         <div className="flex-1 max-w-md mx-8">
-                            <div className="relative w-full">
-                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                    <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                    </svg>
+                            <form onSubmit={handleSearchSubmit}>
+                                <div className="relative w-full">
+                                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                        {isSearching ? (
+                                            <div className="w-5 h-5 border-2 border-green-200 border-t-green-600 rounded-full animate-spin"></div>
+                                        ) : (
+                                            <svg className="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+                                            </svg>
+                                        )}
+                                    </div>
+                                    <input
+                                        type="text"
+                                        placeholder="Search 'butter'"
+                                        value={searchTerm}
+                                        onChange={handleSearchChange}
+                                        className="block w-full pl-10 pr-10 py-2 border border-gray-300 rounded-lg leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-green-500 focus:border-green-500 sm:text-sm"
+                                    />
+                                    {searchTerm && (
+                                        <button
+                                            type="button"
+                                            onClick={handleClearSearch}
+                                            className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                                        >
+                                            <svg className="h-5 w-5 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+                                            </svg>
+                                        </button>
+                                    )}
                                 </div>
-                                <input
-                                    type="text"
-                                    placeholder="Search 'butter'"
-                                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg leading-5 bg-gray-50 placeholder-gray-500 focus:outline-none focus:placeholder-gray-400 focus:ring-1 focus:ring-green-500 focus:border-green-500 sm:text-sm"
-                                />
-                            </div>
+                            </form>
                         </div>
 
                         {/* Action Buttons */}

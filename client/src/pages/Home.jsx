@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useLocation } from 'react-router-dom'
 import CategorySidebar from '../components/CategorySidebar'
 import { useCart } from '../contexts/CartContext'
 import CartToast from '../components/CartToast'
@@ -12,8 +12,10 @@ function Home() {
   const [isTransitioning, setIsTransitioning] = useState(false)
   const [showToast, setShowToast] = useState(false)
   const [toastProduct, setToastProduct] = useState(null)
+  const [searchTerm, setSearchTerm] = useState('')
   
   const { addToCart } = useCart()
+  const location = useLocation()
 
   // Handle add to cart
   const handleAddToCart = (product) => {
@@ -36,12 +38,21 @@ function Home() {
   };
 
   // Fetch products from API
-  const fetchProducts = async (categoryId = null) => {
+  const fetchProducts = async (categoryId = null, searchQuery = '') => {
     try {
       setLoading(true);
-      let url = 'https://api.milkoza.in/api/products';
+      let url = 'https://api.milkoza.in/api/products?limit=1000';
+      
+      // Add search parameter if provided
+      if (searchQuery) {
+        url += `&search=${encodeURIComponent(searchQuery)}`;
+      }
+      
       if (categoryId) {
-        url = `https://api.milkoza.in/api/products/category/${categoryId}`;
+        url = `https://api.milkoza.in/api/products/category/${categoryId}?limit=1000`;
+        if (searchQuery) {
+          url += `&search=${encodeURIComponent(searchQuery)}`;
+        }
       }
       
       const response = await fetch(url);
@@ -71,18 +82,45 @@ function Home() {
     // Smooth transition with loading state
     setTimeout(() => {
       if (category) {
-        fetchProducts(category._id);
+        fetchProducts(category._id, searchTerm);
       } else {
-        setFilteredProducts(allProducts);
-        setLoading(false);
+        if (searchTerm) {
+          fetchProducts(null, searchTerm);
+        } else {
+          setFilteredProducts(allProducts);
+          setLoading(false);
+        }
       }
       setIsTransitioning(false);
     }, 150); // Small delay for smooth UX
   };
 
+  // Handle URL search parameters
+  useEffect(() => {
+    const urlParams = new URLSearchParams(location.search);
+    const searchParam = urlParams.get('search');
+    
+    if (searchParam) {
+      setSearchTerm(searchParam);
+      fetchProducts(selectedCategory?._id, searchParam);
+    } else {
+      setSearchTerm('');
+      if (selectedCategory) {
+        fetchProducts(selectedCategory._id);
+      } else {
+        fetchProducts();
+      }
+    }
+  }, [location.search, selectedCategory]);
+
   // Initialize with all products
   useEffect(() => {
-    fetchProducts();
+    const urlParams = new URLSearchParams(location.search);
+    const searchParam = urlParams.get('search');
+    
+    if (!searchParam) {
+      fetchProducts();
+    }
   }, [])
 
 
@@ -112,14 +150,22 @@ function Home() {
                    )}
                    
                    <div className="h-[calc(100vh-120px)] sm:h-[calc(100vh-140px)] lg:h-[calc(100vh-160px)] overflow-y-auto pr-2 scrollbar-thin scrollbar-thumb-green-300 scrollbar-track-gray-100 hover:scrollbar-thumb-green-400">
-              {/* Category Header */}
-              {selectedCategory && (
+              {/* Category/Search Header */}
+              {(selectedCategory || searchTerm) && (
                 <div className="mb-4 p-3 bg-green-50 rounded-lg border border-green-200">
                   <h3 className="text-lg font-semibold text-green-800">
-                    {selectedCategory.name} Products
+                    {searchTerm ? (
+                      <>Search Results for "{searchTerm}"</>
+                    ) : (
+                      <>{selectedCategory.name} Products</>
+                    )}
                   </h3>
                   <p className="text-sm text-green-600">
-                    Showing {filteredProducts.length} products in this category
+                    {searchTerm ? (
+                      <>Found {filteredProducts.length} products matching "{searchTerm}"</>
+                    ) : (
+                      <>Showing {filteredProducts.length} products in this category</>
+                    )}
                   </p>
                 </div>
               )}
@@ -200,7 +246,9 @@ function Home() {
                         </svg>
                         <p className="text-lg font-medium">No products found</p>
                         <p className="text-sm">
-                          {selectedCategory 
+                          {searchTerm 
+                            ? `No products found matching "${searchTerm}". Try a different search term.`
+                            : selectedCategory 
                             ? `No products available in ${selectedCategory.name} category`
                             : 'No products available'
                           }
