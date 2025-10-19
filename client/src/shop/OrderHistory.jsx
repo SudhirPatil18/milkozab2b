@@ -235,20 +235,21 @@ const OrderHistory = () => {
                     <div key={index} className="flex items-center space-x-3">
                       <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0">
                         <img
-                          src={item.product.photo?.startsWith('http') ? item.product.photo : `https://api.milkoza.in${item.product.photo}`}
-                          alt={item.product.name}
+                          src={item.product?.photo?.startsWith('http') ? item.product.photo : `https://api.milkoza.in${item.product?.photo || ''}`}
+                          alt={item.product?.name || 'Product'}
                           className="w-full h-full object-cover"
                           onError={(e) => {
-                            e.target.src = 'https://via.placeholder.com/50x50?text=No+Image';
+                            // Use a data URI to avoid network requests
+                            e.target.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNTAiIGhlaWdodD0iNTAiIHZpZXdCb3g9IjAgMCA1MCA1MCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHJlY3Qgd2lkdGg9IjUwIiBoZWlnaHQ9IjUwIiBmaWxsPSIjRjNGNEY2Ii8+CjxwYXRoIGQ9Ik0yNSAyMEMyMC41ODU4IDIwIDE3IDIzLjU4NTggMTcgMjhDMjcIDMyLjQxNDIgMjAuNTg1OCAzNiAyNSAzNkMyOS40MTQyIDM2IDMzIDMyLjQxNDIgMzMgMjhDMzMgMjMuNTg1OCAyOS40MTQyIDIwIDI1IDIwWiIgZmlsbD0iIzlDQTNBRiIvPgo8cGF0aCBkPSJNMjUgMzJDMjYuMTA0NiAzMiAyNyAzMS4xMDQ2IDI3IDMwQzI3IDI4Ljg5NTQgMjYuMTA0NiAyOCAyNSAyOEMyMy44OTU0IDI4IDIzIDI4Ljg5NTQgMjMgMzBDMjMgMzEuMTA0NiAyMy44OTU0IDMyIDI1IDMyWiIgZmlsbD0iIzlDQTNBRiIvPgo8L3N2Zz4K';
                           }}
                         />
                       </div>
                       <div className="flex-1 min-w-0">
                         <h5 className="text-sm font-medium text-gray-900 truncate">
-                          {item.product.name}
+                          {item.product?.name || 'Product not available'}
                         </h5>
                         <p className="text-xs text-gray-500">
-                          Qty: {item.quantity} • {item.product.unit?.symbol || 'kg'}
+                          Qty: {item.quantity} • {item.product?.unit?.symbol || 'kg'}
                         </p>
                       </div>
                       <div className="text-sm font-semibold text-gray-900">
