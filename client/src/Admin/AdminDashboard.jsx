@@ -26,6 +26,7 @@ import {
 } from '@heroicons/react/24/outline'
 import { useAdminAuth } from '../contexts/AdminAuthContext'
 import toast from 'react-hot-toast'
+import AuthDebugger from '../components/AuthDebugger'
 
 function AdminDashboard() {
   const navigate = useNavigate()
@@ -158,9 +159,14 @@ function AdminDashboard() {
 
   // Redirect if not authenticated
   useEffect(() => {
-    if (!loading && !isAuthenticated()) {
-      navigate('/admin/login')
-    }
+    // Add a small delay to allow the auth context to fully initialize
+    const timer = setTimeout(() => {
+      if (!loading && !isAuthenticated()) {
+        navigate('/admin/login')
+      }
+    }, 100);
+
+    return () => clearTimeout(timer);
   }, [loading, isAuthenticated, navigate])
 
   if (loading || dashboardData.loading) {
@@ -458,6 +464,9 @@ function AdminDashboard() {
           })}
         </div>
       </div>
+      
+      {/* Debug component - remove in production */}
+      <AuthDebugger />
     </div>
   )
 }

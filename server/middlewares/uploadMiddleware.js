@@ -12,8 +12,10 @@ const storage = multer.diskStorage({
         let uploadDir;
         if (req.baseUrl.includes('/products')) {
             uploadDir = path.join(__dirname, '../uploads/products');
-        } else if (req.baseUrl.includes('/categories')) {
+        } else if (req.baseUrl.includes('/categories') || (req.baseUrl.includes('/headadmin') && req.path.includes('/categories'))) {
             uploadDir = path.join(__dirname, '../uploads/categories');
+        } else if (req.baseUrl.includes('/admin') && (file.fieldname === 'profilePhoto' || file.fieldname === 'aadhaarFront' || file.fieldname === 'aadhaarBack')) {
+            uploadDir = path.join(__dirname, '../uploads/admin');
         } else {
             uploadDir = path.join(__dirname, '../uploads');
         }
@@ -25,8 +27,18 @@ const storage = multer.diskStorage({
         let prefix = '';
         if (req.baseUrl.includes('/products')) {
             prefix = file.fieldname === 'subimage' ? 'subimage-' : 'product-';
-        } else if (req.baseUrl.includes('/categories')) {
+        } else if (req.baseUrl.includes('/categories') || (req.baseUrl.includes('/headadmin') && req.path.includes('/categories'))) {
             prefix = 'category-';
+        } else if (req.baseUrl.includes('/admin')) {
+            if (file.fieldname === 'profilePhoto') {
+                prefix = 'admin-photo-';
+            } else if (file.fieldname === 'aadhaarFront') {
+                prefix = 'aadhaar-front-';
+            } else if (file.fieldname === 'aadhaarBack') {
+                prefix = 'aadhaar-back-';
+            } else {
+                prefix = 'admin-';
+            }
         } else {
             prefix = 'upload-';
         }
@@ -65,9 +77,17 @@ const uploadProductFiles = upload.fields([
     { name: 'subimage', maxCount: 1 }
 ]);
 
+// Middleware for admin registration files (profile photo, Aadhaar front and back)
+const uploadAdminFiles = upload.fields([
+    { name: 'profilePhoto', maxCount: 1 },
+    { name: 'aadhaarFront', maxCount: 1 },
+    { name: 'aadhaarBack', maxCount: 1 }
+]);
+
 export {
     uploadSingle,
     uploadMultiple,
     uploadProductFiles,
+    uploadAdminFiles,
     upload
 };

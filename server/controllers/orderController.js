@@ -60,10 +60,20 @@ export const createOrder = async (req, res) => {
         const orderCount = await Order.countDocuments();
         const orderNumber = `MILKOZA${String(orderCount + 1).padStart(6, '0')}`;
 
+        // Get admin from the first product
+        const firstProduct = await Product.findById(items[0].productId);
+        if (!firstProduct) {
+            return res.status(400).json({
+                success: false,
+                message: 'Product not found'
+            });
+        }
+
         // Create order
         const order = await Order.create({
             orderNumber,
             user: req.user.id,
+            admin: firstProduct.createdBy,
             items: orderItems,
             deliveryAddress,
             paymentMode,
@@ -305,7 +315,7 @@ export const getAllOrdersAdmin = async (req, res) => {
         } = req.query;
         const skip = (page - 1) * limit;
 
-        let query = {};
+        let query = { admin: req.user.id };
         
         // Status filter
         if (status && status !== 'all') {
@@ -409,6 +419,14 @@ export const updateOrderStatusAdmin = async (req, res) => {
             return res.status(404).json({
                 success: false,
                 message: 'Order not found'
+            });
+        }
+
+        // Check if order belongs to the admin
+        if (order.admin.toString() !== req.user.id) {
+            return res.status(403).json({
+                success: false,
+                message: 'You can only update orders for your products'
             });
         }
 

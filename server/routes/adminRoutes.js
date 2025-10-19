@@ -2,6 +2,7 @@ import express from 'express';
 import { 
     registerAdmin, 
     loginAdmin, 
+    logoutAdmin,
     getAdminProfile, 
     updateAdminProfile,
     getAllShops,
@@ -13,12 +14,14 @@ import {
 } from '../controllers/adminController.js';
 import { getAllCategoriesAdmin } from '../controllers/categoryController.js';
 import { adminProtect } from '../middlewares/adminAuthMiddleware.js';
+import { uploadAdminFiles } from '../middlewares/uploadMiddleware.js';
 
 const router = express.Router();
 
 // Public routes
-router.post('/register', registerAdmin);
+router.post('/register', uploadAdminFiles, registerAdmin);
 router.post('/login', loginAdmin);
+router.post('/logout', logoutAdmin);
 
 // Protected routes
 router.get('/profile', adminProtect, getAdminProfile);

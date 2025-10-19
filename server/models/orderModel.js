@@ -70,6 +70,11 @@ const orderSchema = new mongoose.Schema({
     ref: 'Shop',
     required: true
   },
+  admin: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Admin',
+    required: true
+  },
   items: [orderItemSchema],
   deliveryAddress: addressSchema,
   paymentMode: {
@@ -122,6 +127,7 @@ orderSchema.pre('save', async function(next) {
 
 // Index for better performance
 orderSchema.index({ user: 1 });
+orderSchema.index({ admin: 1 });
 orderSchema.index({ orderNumber: 1 });
 orderSchema.index({ orderStatus: 1 });
 orderSchema.index({ createdAt: -1 });

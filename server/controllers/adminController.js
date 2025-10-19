@@ -37,21 +37,53 @@ const validatePassword = (password) => {
 // @access  Public
 export const registerAdmin = async (req, res) => {
     try {
-        const { name, address, phoneNumber, password, confirmPassword } = req.body;
+        const { 
+            name, 
+            phoneNumber, 
+            password, 
+            confirmPassword,
+            aadhaarNumber,
+            // Address fields
+            street,
+            area,
+            city,
+            state,
+            pincode,
+            landmark,
+            fullAddress
+        } = req.body;
 
         // Input validation
-        if (!name || !address || !phoneNumber || !password || !confirmPassword) {
+        if (!name || !phoneNumber || !password || !confirmPassword || !aadhaarNumber) {
             return res.status(400).json({
                 success: false,
-                message: 'All fields are required',
+                message: 'All required fields are missing',
                 code: 'MISSING_FIELDS'
+            });
+        }
+
+        // Address validation
+        if (!street || !area || !city || !state || !pincode || !fullAddress) {
+            return res.status(400).json({
+                success: false,
+                message: 'All address fields are required',
+                code: 'MISSING_ADDRESS_FIELDS'
+            });
+        }
+
+        // File validation
+        if (!req.files || !req.files.profilePhoto || !req.files.aadhaarFront || !req.files.aadhaarBack) {
+            return res.status(400).json({
+                success: false,
+                message: 'Profile photo, Aadhaar front and back images are required',
+                code: 'MISSING_FILES'
             });
         }
 
         // Trim and validate inputs
         const trimmedName = name.trim();
-        const trimmedAddress = address.trim();
         const trimmedPhone = phoneNumber.trim();
+        const trimmedAadhaar = aadhaarNumber.trim();
 
         if (trimmedName.length < 2) {
             return res.status(400).json({
@@ -61,19 +93,69 @@ export const registerAdmin = async (req, res) => {
             });
         }
 
-        if (trimmedAddress.length < 5) {
-            return res.status(400).json({
-                success: false,
-                message: 'Address must be at least 5 characters long',
-                code: 'INVALID_ADDRESS'
-            });
-        }
-
         if (!validatePhoneNumber(trimmedPhone)) {
             return res.status(400).json({
                 success: false,
                 message: 'Please enter a valid 10-digit phone number',
                 code: 'INVALID_PHONE'
+            });
+        }
+
+        // Aadhaar validation
+        if (!/^[0-9]{12}$/.test(trimmedAadhaar)) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please enter a valid 12-digit Aadhaar number',
+                code: 'INVALID_AADHAAR'
+            });
+        }
+
+        // Address validation
+        if (street.trim().length < 5) {
+            return res.status(400).json({
+                success: false,
+                message: 'Street address must be at least 5 characters long',
+                code: 'INVALID_STREET'
+            });
+        }
+
+        if (area.trim().length < 2) {
+            return res.status(400).json({
+                success: false,
+                message: 'Area must be at least 2 characters long',
+                code: 'INVALID_AREA'
+            });
+        }
+
+        if (city.trim().length < 2) {
+            return res.status(400).json({
+                success: false,
+                message: 'City must be at least 2 characters long',
+                code: 'INVALID_CITY'
+            });
+        }
+
+        if (state.trim().length < 2) {
+            return res.status(400).json({
+                success: false,
+                message: 'State must be at least 2 characters long',
+                code: 'INVALID_STATE'
+            });
+        }
+
+        if (!/^[0-9]{6}$/.test(pincode.trim())) {
+            return res.status(400).json({
+                success: false,
+                message: 'Please enter a valid 6-digit pincode',
+                code: 'INVALID_PINCODE'
+            });
+        }
+
+        if (fullAddress.trim().length < 10) {
+            return res.status(400).json({
+                success: false,
+                message: 'Full address must be at least 10 characters long',
+                code: 'INVALID_FULL_ADDRESS'
             });
         }
 
@@ -95,20 +177,37 @@ export const registerAdmin = async (req, res) => {
         }
 
         // Check if admin already exists
-        const existingAdmin = await Admin.findOne({ phoneNumber: trimmedPhone });
+        const existingAdmin = await Admin.findOne({ 
+            $or: [
+                { phoneNumber: trimmedPhone },
+                { aadhaarNumber: trimmedAadhaar }
+            ]
+        });
         if (existingAdmin) {
             return res.status(409).json({
                 success: false,
-                message: 'Admin with this phone number already exists',
+                message: 'Admin with this phone number or Aadhaar number already exists',
                 code: 'ADMIN_EXISTS'
             });
         }
 
-        // Create admin
+        // Create admin with detailed address
         const admin = await Admin.create({
             name: trimmedName,
-            address: trimmedAddress,
             phoneNumber: trimmedPhone,
+            aadhaarNumber: trimmedAadhaar,
+            aadhaarFrontImage: req.files.aadhaarFront[0].filename,
+            aadhaarBackImage: req.files.aadhaarBack[0].filename,
+            profilePhoto: req.files.profilePhoto[0].filename,
+            address: {
+                street: street.trim(),
+                area: area.trim(),
+                city: city.trim(),
+                state: state.trim(),
+                pincode: pincode.trim(),
+                landmark: landmark ? landmark.trim() : '',
+                fullAddress: fullAddress.trim()
+            },
             password
         });
 
@@ -122,8 +221,8 @@ export const registerAdmin = async (req, res) => {
                 admin: {
                     id: admin._id,
                     name: admin.name,
-                    address: admin.address,
                     phoneNumber: admin.phoneNumber,
+                    address: admin.address,
                     isActive: admin.isActive,
                     createdAt: admin.createdAt
                 },
@@ -138,8 +237,8 @@ export const registerAdmin = async (req, res) => {
         if (error.code === 11000) {
             return res.status(409).json({
                 success: false,
-                message: 'Admin with this phone number already exists',
-                code: 'DUPLICATE_PHONE'
+                message: 'Admin with this phone number or Aadhaar number already exists',
+                code: 'DUPLICATE_DATA'
             });
         }
 
@@ -196,7 +295,9 @@ export const loginAdmin = async (req, res) => {
         }
 
         // Find admin by phone number
-        const admin = await Admin.findOne({ phoneNumber: trimmedPhone }).select('+password');
+        const admin = await Admin.findOne({ phoneNumber: trimmedPhone })
+            .select('+password')
+            .populate('blockedBy', 'name username');
         
         if (!admin) {
             return res.status(401).json({
@@ -206,16 +307,7 @@ export const loginAdmin = async (req, res) => {
             });
         }
 
-        // Check if admin is active
-        if (!admin.isActive) {
-            return res.status(403).json({
-                success: false,
-                message: 'Your account has been deactivated. Please contact support.',
-                code: 'ACCOUNT_DEACTIVATED'
-            });
-        }
-
-        // Check password
+        // Check password first
         const isPasswordValid = await admin.comparePassword(password);
         
         if (!isPasswordValid) {
@@ -223,6 +315,35 @@ export const loginAdmin = async (req, res) => {
                 success: false,
                 message: 'Invalid phone number or password',
                 code: 'INVALID_CREDENTIALS'
+            });
+        }
+
+        // Check if admin is blocked
+        if (admin.isBlocked) {
+            return res.status(403).json({
+                success: false,
+                message: 'Your account has been blocked by HeadAdmin. Please contact HeadAdmin for assistance.',
+                code: 'ACCOUNT_BLOCKED',
+                data: {
+                    admin: {
+                        id: admin._id,
+                        name: admin.name,
+                        phoneNumber: admin.phoneNumber,
+                        isBlocked: admin.isBlocked,
+                        blockedReason: admin.blockedReason,
+                        blockedBy: admin.blockedBy,
+                        blockedAt: admin.blockedAt
+                    }
+                }
+            });
+        }
+
+        // Check if admin is active
+        if (!admin.isActive) {
+            return res.status(403).json({
+                success: false,
+                message: 'Your account has been deactivated. Please contact support.',
+                code: 'ACCOUNT_DEACTIVATED'
             });
         }
 
@@ -251,6 +372,28 @@ export const loginAdmin = async (req, res) => {
         res.status(500).json({
             success: false,
             message: 'Internal server error during login',
+            code: 'INTERNAL_ERROR'
+        });
+    }
+};
+
+// @desc    Logout admin
+// @route   POST /api/admin/logout
+// @access  Public
+export const logoutAdmin = async (req, res) => {
+    try {
+        // For JWT tokens, logout is typically handled client-side by removing the token
+        // But we can add server-side logic here if needed (like token blacklisting)
+        
+        res.status(200).json({
+            success: true,
+            message: 'Logout successful'
+        });
+    } catch (error) {
+        console.error('Admin logout error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error during logout',
             code: 'INTERNAL_ERROR'
         });
     }
@@ -668,7 +811,7 @@ export const deleteShop = async (req, res) => {
 // @access  Private (Admin only)
 export const getDashboardStats = async (req, res) => {
     try {
-        // Get counts for all entities
+        // Get counts for all entities filtered by admin
         const [
             totalShops,
             activeShops,
@@ -681,19 +824,19 @@ export const getDashboardStats = async (req, res) => {
         ] = await Promise.all([
             Shop.countDocuments(),
             Shop.countDocuments({ status: 'active' }),
-            Product.countDocuments(),
-            Order.countDocuments(),
+            Product.countDocuments({ createdBy: req.user.id }),
+            Order.countDocuments({ admin: req.user.id }),
             Category.countDocuments(),
             Order.aggregate([
-                { $match: { orderStatus: 'delivered' } },
+                { $match: { orderStatus: 'delivered', admin: req.user.id } },
                 { $group: { _id: null, total: { $sum: '$totalAmount' } } }
             ]),
-            Order.find()
+            Order.find({ admin: req.user.id })
                 .populate('user', 'name')
                 .populate('items.product', 'name price')
                 .sort({ createdAt: -1 })
                 .limit(5),
-            Product.find()
+            Product.find({ createdBy: req.user.id })
                 .sort({ sales: -1 })
                 .limit(5)
                 .select('name price sales')
@@ -702,8 +845,9 @@ export const getDashboardStats = async (req, res) => {
         // Calculate revenue
         const revenue = totalRevenue && totalRevenue.length > 0 ? totalRevenue[0].total : 0;
 
-        // Get order status counts
+        // Get order status counts filtered by admin
         const orderStatusCounts = await Order.aggregate([
+            { $match: { admin: req.user.id } },
             {
                 $group: {
                     _id: '$orderStatus',

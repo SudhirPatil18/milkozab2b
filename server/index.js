@@ -8,6 +8,7 @@ import connectDB from './db/connectiondb.js';
 
 import categoryRoute from './routes/categoryRoutes.js';
 import adminRoute from './routes/adminRoutes.js';
+import headAdminRoute from './routes/headAdminRoutes.js';
 import shopRoute from './routes/shopRoutes.js';
 import productRoute from './routes/productRoutes.js';
 import unitRoute from './routes/unitRoutes.js';
@@ -39,6 +40,7 @@ app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 // Routes
 app.use('/api/categories', categoryRoute);
 app.use('/api/admin', adminRoute);
+app.use('/api/headadmin', headAdminRoute);
 app.use('/api/shop', shopRoute);
 app.use('/api/products', productRoute);
 app.use('/api/units', unitRoute);

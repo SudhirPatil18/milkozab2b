@@ -20,6 +20,7 @@ import AdminLayout from '../Layout/AdminLayout';
 // Import protected route components
 import UserProtected from '../utils/UserProtected';
 import AdminRouteProtected from '../utils/AdminRouteProtected';
+import HeadAdminRouteProtected from '../utils/HeadAdminRouteProtected';
 
 // Import components specific to protected routes
 import Profile from '../shop/Profile';
@@ -41,6 +42,18 @@ import OrderManagement from '../Admin/OrderManagement';
 import AdminOrderSuccess from '../Admin/OrderSuccess';
 import AddAndManageCategory from '../Admin/AddAndManageCategory';
 import AdminSetting from '../Admin/AdminSetting';
+
+// Import HeadAdmin components
+import HeadAdminLayout from '../HeadAdmin/Layout/HeadAdminLayout';
+import HeadAdminDashboard from '../HeadAdmin/pages/HeadAdminDashboard';
+import HeadAdminLogin from '../HeadAdmin/pages/HeadAdminLogin';
+import HeadAdminRegistration from '../HeadAdmin/pages/HeadAdminRegistration';
+import HeadAdminSetting from '../HeadAdmin/pages/HeadAdminSetting';
+import ManageAdmins from '../HeadAdmin/pages/ManageAdmins';
+import PayementRequests from '../HeadAdmin/pages/PayementRequests';
+import HeadAdminOrderManagement from '../HeadAdmin/pages/HeadAdminOrderManagement';
+import HeadAdminAddCategory from '../HeadAdmin/pages/HeadAdminAddCategory';
+import HeadAdminManageShops from '../HeadAdmin/pages/HeadAdminManageShops';
 
 // Import Login components
 import Login from '../pages/Login';
@@ -98,9 +111,24 @@ function AppRoutes() {
                     <Route path='settings' element={<AdminSetting/>} />
                 </Route>
 
+                {/* HeadAdmin Protected Routes (with HeadAdminLayout) */}
+                <Route path='/headadmin' element={<HeadAdminRouteProtected><HeadAdminLayout/></HeadAdminRouteProtected>}>
+                    <Route index element={<HeadAdminDashboard/>} />
+                    <Route path='dashboard' element={<HeadAdminDashboard/>} />
+                    <Route path='manage-admins' element={<ManageAdmins/>} />
+                    <Route path='add-category' element={<HeadAdminAddCategory/>} />
+                    <Route path='manage-shops' element={<HeadAdminManageShops/>} />
+                    <Route path='payment-requests' element={<PayementRequests/>} />
+                    <Route path='order-management' element={<HeadAdminOrderManagement/>} />
+                    <Route path='analytics' element={<HeadAdminDashboard/>} />
+                    <Route path='settings' element={<HeadAdminSetting/>} />
+                </Route>
+
                 <Route path='/login' element={<Login/>}/>
                 <Route path='/admin/login' element={<AdminLogin />}/>
                 <Route path='/admin/register' element={<AdminRegister />}/>
+                <Route path='/headadmin/login' element={<HeadAdminLogin />}/>
+                <Route path='/headadmin/register' element={<HeadAdminRegistration />}/>
                 <Route path='/shop-login' element={<ShopLogin/>}/>
                 <Route path='/shop-register' element={<ShopRegister/>}/>
                 <Route path='/shop/profile' element={<ShopProfile/>}/>

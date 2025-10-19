@@ -1,25 +1,38 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAdminAuth } from '../contexts/AdminAuthContext'
+import BlockedAccountModal from '../components/BlockedAccountModal'
 import toast from 'react-hot-toast'
 
 function AdminRouteProtected({ children }) {
   const navigate = useNavigate()
+  const { isAuthenticated, isBlocked, admin } = useAdminAuth()
+  const [showBlockedModal, setShowBlockedModal] = useState(false)
 
   useEffect(() => {
-    const token = localStorage.getItem('adminToken')
-    const adminInfo = localStorage.getItem('adminInfo')
-
-    if (!token || !adminInfo) {
-      toast.error('Please login to access admin dashboard')
-      navigate('/admin/login')
+    if (!isAuthenticated()) {
+      if (isBlocked()) {
+        setShowBlockedModal(true)
+      } else {
+        toast.error('Please login to access admin dashboard')
+        navigate('/admin/login')
+      }
     }
-  }, [navigate])
+  }, [isAuthenticated, isBlocked, navigate])
 
   // Check if user is authenticated
-  const token = localStorage.getItem('adminToken')
-  const adminInfo = localStorage.getItem('adminInfo')
-
-  if (!token || !adminInfo) {
+  if (!isAuthenticated()) {
+    if (isBlocked()) {
+      return (
+        <BlockedAccountModal 
+          admin={admin} 
+          onClose={() => {
+            setShowBlockedModal(false)
+            navigate('/admin/login')
+          }} 
+        />
+      )
+    }
     return null // Will redirect in useEffect
   }
 

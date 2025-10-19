@@ -293,13 +293,33 @@ export const createProduct = async (req, res) => {
 export const updateProduct = async (req, res) => {
     try {
         const { name, price, originalPrice, shortDescription, category, quantity, unit, isActive } = req.body;
+        
+        console.log('Update product request:');
+        console.log('Product ID:', req.params.id);
+        console.log('Request user:', req.user);
+        console.log('Request user ID:', req.user.id);
 
-        // Check if product exists
+        // Check if product exists and belongs to the admin
         const product = await Product.findById(req.params.id);
         if (!product) {
             return res.status(404).json({
                 success: false,
                 message: 'Product not found'
+            });
+        }
+
+        // Check if product belongs to the admin
+        console.log('Product ownership check:');
+        console.log('Product createdBy:', product.createdBy);
+        console.log('Product createdBy (string):', product.createdBy.toString());
+        console.log('Request user ID:', req.user.id);
+        console.log('Request user ID (string):', req.user.id.toString());
+        console.log('Are they equal?', product.createdBy.toString() === req.user.id.toString());
+        
+        if (product.createdBy.toString() !== req.user.id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: 'You can only update your own products'
             });
         }
 
@@ -400,11 +420,31 @@ export const updateProduct = async (req, res) => {
 // @access  Private (Admin only)
 export const deleteProduct = async (req, res) => {
     try {
+        console.log('Delete product request:');
+        console.log('Product ID:', req.params.id);
+        console.log('Request user:', req.user);
+        console.log('Request user ID:', req.user.id);
+        
         const product = await Product.findById(req.params.id);
         if (!product) {
             return res.status(404).json({
                 success: false,
                 message: 'Product not found'
+            });
+        }
+
+        // Check if product belongs to the admin
+        console.log('Product delete ownership check:');
+        console.log('Product createdBy:', product.createdBy);
+        console.log('Product createdBy (string):', product.createdBy.toString());
+        console.log('Request user ID:', req.user.id);
+        console.log('Request user ID (string):', req.user.id.toString());
+        console.log('Are they equal?', product.createdBy.toString() === req.user.id.toString());
+        
+        if (product.createdBy.toString() !== req.user.id.toString()) {
+            return res.status(403).json({
+                success: false,
+                message: 'You can only delete your own products'
             });
         }
 
@@ -438,8 +478,8 @@ export const getAllProductsAdmin = async (req, res) => {
     try {
         const { category, search, page = 1, limit = 10 } = req.query;
         
-        // Build query
-        let query = {};
+        // Build query - filter by admin
+        let query = { createdBy: req.user.id };
         
         // Filter by category if provided
         if (category && category !== 'all') {
