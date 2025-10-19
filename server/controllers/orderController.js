@@ -422,13 +422,14 @@ export const updateOrderStatusAdmin = async (req, res) => {
             });
         }
 
-        // Check if order belongs to the admin
-        if (order.admin.toString() !== req.user.id) {
-            return res.status(403).json({
-                success: false,
-                message: 'You can only update orders for your products'
-            });
-        }
+        // Check if order belongs to the admin (commented out for B2B platform)
+        // In a B2B platform, any admin should be able to manage any order
+        // if (order.admin.toString() !== req.user.id) {
+        //     return res.status(403).json({
+        //         success: false,
+        //         message: 'You can only update orders for your products'
+        //     });
+        // }
 
         order.orderStatus = status;
         await order.save();
